@@ -24,46 +24,33 @@ local SpatialMaxPooling = nn.SpatialMaxPooling --lib[2]
 
 
 local net = nn.Sequential()
-print(a:size())
 net:add(SpatialConvolution(3, 64, 11, 11, 4, 4, 2, 2)) -- 224 -> 55
-print(net:forward(a):size())
 net:add(nn.ReLU(true))
-print(net:forward(a):size())
+net:add(nn.SpatialBatchNormalization(64))
 net:add(SpatialMaxPooling(3, 3, 2, 2)) -- 55 ->  27
-print(net:forward(a):size())
 net:add(SpatialConvolution(64, 192, 5, 5, 1, 1, 2, 2)) --  27 -> 27
-print(net:forward(a):size())
 net:add(nn.ReLU(true))
-print(net:forward(a):size())
+net:add(nn.SpatialBatchNormalization(192))
 net:add(SpatialMaxPooling(3, 3, 2, 2)) --  27 ->  13
-print(net:forward(a):size())
 net:add(SpatialConvolution(192, 384, 3, 3, 1, 1, 1, 1)) --  13 ->  13
-print(net:forward(a):size())
 net:add(nn.ReLU(true))
-print(net:forward(a):size())
+net:add(nn.SpatialBatchNormalization(384))
 net:add(SpatialConvolution(384, 256, 3, 3, 1, 1, 1, 1)) --  13 ->  13
-print(net:forward(a):size())
 net:add(nn.ReLU(true))
-print(net:forward(a):size())
+net:add(nn.SpatialBatchNormalization(256))
 net:add(SpatialConvolution(256, 256, 3, 3, 1, 1, 1, 1)) --  13 ->  13
-print(net:forward(a):size())
 net:add(nn.ReLU(true))
-print(net:forward(a):size())
-net:add(SpatialMaxPooling(3, 3, 2, 2)) -- 13 -> 6
-print(net:forward(a):size())
-net:add(nn.View(256 * 6 * 6))
-print(net:forward(a):size())
+net:add(nn.SpatialBatchNormalization(256))
+net:add(SpatialMaxPooling(3, 3, 2, 2)) --  27 ->  13
+net:add(nn.View(256 * 6 * 6)) --Changed
 net:add(nn.Dropout(0.5))
-print(net:forward(a):size())
-net:add(nn.Linear(256 * 6 * 6, 4096))
-print(net:forward(a):size())
-net:add(nn.Threshold(0, 1e-6))
-print(net:forward(a):size())
+net:add(nn.Linear(256 * 6 * 6, 4096)) --Changed
+net:add(nn.ReLU(true))
+net:add(nn.BatchNormalization(4096))
 net:add(nn.Dropout(0.5))
-print(net:forward(a):size())
 net:add(nn.Linear(4096, 4096))
-print(net:forward(a):size())
-net:add(nn.Threshold(0, 1e-6))
+net:add(nn.ReLU(true))
+net:add(nn.BatchNormalization(4096))
 print(net:forward(a):size())
 net:add(nn.Linear(4096, 128))
 print(net:forward(a):size())
